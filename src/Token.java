@@ -8,53 +8,64 @@ public class Token {
      * enum to keep Token types
      */
     public enum tokenType {
-        INDENTIFIER,
-        INDENT,
+        IDENTIFIER,            //was WORD
+        INDENT,                // should be taken care of in lex function
         DEDENT,
-
-        NUMBER,
-        STRINGLITERAL,
-        CHARACTERLITERAL,
-        BOOLEAN,
-        ARRAY,
-        REAL,
+		COMMA,// ``
         
-        VARAIABLES,
-        CONSTANT,
+        STRINGLITERAL,          //hyrbid
+        CHARACTERLITERAL,       //hybrid
+        INTEGER,                //Was NUMBER; //hybrid
+        REAL,                   //hyrbid
+        BOOLEAN,                //must be taken care of using Hashmap
+        ARRAY,                  //must be taken care of using Hashmap
         
-        ASSIGNMENT_COLON_EQUALS,
-        ASSIGNMENT_EQUALS,
-        ASSIGNMENT_COLON,
         
-        COMPARATOR_EQUALS,
-        COMPARATOR_NOT_EQUAL,
-        COMPARATOR_LESS,
-        COMPARATOR_LESS_OR_EQUALS,
-        COMPARATOR_GREATER,
-        COMPARATOR_GREATER_OR_EQUALS,
+        VARAIABLES,             //must be taken care of using Hashmap
+        CONSTANT,               //must be taken care of using Hashmap
         
-        DEFINE,
-        WRITE,
+        ASSIGNMENT_COLON_EQUALS,//must be taken care of in lex function
+        ASSIGNMENT_EQUALS,      //must be taken care of in lex function
+        ASSIGNMENT_COLON,       //must be taken care of in lex function
         
-        FOR,
-        WHILE,
-        REPEAT_UNTIL,
+        COMPARATOR_EQUALS,      //must be taken care of using Hashmap
+        COMPARATOR_NOT_EQUAL,   //must be taken care of using Hashmap
+        COMPARATOR_LESS,        //must be taken care of using Hashmap
+        COMPARATOR_LESS_OR_EQUALS,//must be taken care of using Hashmap
+        COMPARATOR_GREATER,     //must be taken care of using Hashmap
+        COMPARATOR_GREATER_OR_EQUALS,//must be taken care of using Hashmap
         
-        PLUS,
-        MINUS,
-        MULTPILY,
-        DIVIDE,
-        MOD,
+        DEFINE,                 //must be taken care of using Hashmap
+        WRITE,                  //must be taken care of using Hashmap
         
-        NOT,
-        AND,
-        OR,
+        OF,                     //must be taken care of using Hashmap
+        FROM,                   //must be taken care of using Hashmap
+        TO,                     //must be taken care of using Hashmap
         
-        INDEX,
-        COMMENT,
-        PARAMETERS,
+        FOR,                    //must be taken care of using Hashmap
+        WHILE,                  //must be taken care of using Hashmap
+        REPEAT,
+        UNTIL,           		//must be taken care of using Hashmap
         
-        ENDOFLINE}
+        PLUS,                   //must be taken care of using Hashmap
+        MINUS,                  //must be taken care of using Hashmap
+        MULTPILY,               //must be taken care of using Hashmap
+        DIVIDE,                 //must be taken care of using Hashmap
+        MOD,                    //must be taken care of using Hashmap
+        
+        NOT,                    //must be taken care of using Hashmap
+        AND,                    //must be taken care of using Hashmap
+        OR,                     //must be taken care of using Hashmap
+        
+        //INDEX,                  //must be taken care of in lex function
+        COMMENT,                //must be taken care of in lex function
+        PARAMETERS_START,       //must be taken care of in lex function
+        PARAMETERS_END,			//must be taken care of in lex function
+        INDEX_START,
+        INDEX_END,
+        
+        ENDOFLINE
+	}
 
     /**
      * Variable to contain Token type.
