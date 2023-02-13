@@ -25,19 +25,19 @@ public class Lexer {
 	HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>() {{  //for easier token assignment
 		//put("", tokenType.);
 		
-		//put("variables", Token.tokenType.VARAIABLES);
-		//put("constant", Token.tokenType.CONSTANT);
+		put("variables", Token.tokenType.VARAIABLES);
+		put("constant", Token.tokenType.CONSTANT);
 		
 		put("string", Token.tokenType.STRINGLITERAL);
 		put("character", Token.tokenType.CHARACTERLITERAL);
-		//put("integer", Token.tokenType.INTEGER);
-		//put("real", Token.tokenType.REAL);
-		//put("boolean", Token.tokenType.BOOLEAN);
-		//put("array", Token.tokenType.ARRAY);
+		put("integer", Token.tokenType.INTEGER);
+		put("real", Token.tokenType.REAL);
+		put("boolean", Token.tokenType.BOOLEAN);
+		put("array", Token.tokenType.ARRAY);
 		
-		//put("of", Token.tokenType.OF);
-		//put("from", Token.tokenType.FROM);
-		//put("to", Token.tokenType.TO);
+		put("of", Token.tokenType.OF);
+		put("from", Token.tokenType.FROM);
+		put("to", Token.tokenType.TO);
 		
 		put(":=", Token.tokenType.ASSIGNMENT_COLON_EQUALS);
 		put("=", Token.tokenType.ASSIGNMENT_EQUALS);
@@ -50,23 +50,23 @@ public class Lexer {
 		put(">", Token.tokenType.COMPARATOR_GREATER);
 		put(">=", Token.tokenType.COMPARATOR_GREATER_OR_EQUALS);
 		
-		//put("define", Token.tokenType.DEFINE);
-		//put("write", Token.tokenType.WRITE);
+		put("define", Token.tokenType.DEFINE);
+		put("write", Token.tokenType.WRITE);
 		
-		//put("for", Token.tokenType.FOR);
-		//put("while", Token.tokenType.WHILE);
-		//put("repeat", Token.tokenType.REPEAT);
-		//put("until", Token.tokenType.UNTIL);
+		put("for", Token.tokenType.FOR);
+		put("while", Token.tokenType.WHILE);
+		put("repeat", Token.tokenType.REPEAT);
+		put("until", Token.tokenType.UNTIL);
 		
 		put("+", Token.tokenType.PLUS);
 		put("-", Token.tokenType.MINUS);
 		put("*", Token.tokenType.MULTPILY);
 		put("/", Token.tokenType.DIVIDE);
-		//put("mod", Token.tokenType.MOD);
+		put("mod", Token.tokenType.MOD);
 		
-		//put("not", Token.tokenType.NOT);
-		//put("and", Token.tokenType.AND);
-		//put("or", Token.tokenType.OR);
+		put("not", Token.tokenType.NOT);
+		put("and", Token.tokenType.AND);
+		put("or", Token.tokenType.OR);
 		
 		put("{", Token.tokenType.COMMENT);
 		put("}", Token.tokenType.COMMENT);
@@ -131,18 +131,11 @@ public class Lexer {
 	
 	/**
 	 * Main state machine
+	 *
+	 *
 	 * @param line
 	 */
 	public void lex(String line) {
-		//main logic of state machine
-		//for loop loops through all characters in the string input of the function
-		//while loop loops the character at hand until it is assigned accordingly
-		//(1)In scanning state if char is not an illegal character and also changes states to number, word and floatingNumber
-		//accordingly.
-		//(2)In word state all numbers and words are accepted
-		//(3)In number state all numbers and a period is accepted
-		//(4)In floatingNumber state all numbers are accepted and all other ones either get built as another token or
-		//get rejected
 		
 		if (charState != lexState.commentMode){
 			charState = lexState.tabMode;
@@ -160,12 +153,14 @@ public class Lexer {
 					} else {
 						if (indentLevelInLex > indentLevel) {
 							for(int i = indentLevelInLex-indentLevel; i > 0; i--){
+								indentLevel++;
 								tokens.add(tokens.size(),new Token(Token.tokenType.INDENT, ""));
 							}
 							charState = lexState.scanning;
 							scanningOutsideOfLex(ch);
-						} else if (indentLevelInLex > indentLevel) {
-							for(int i = indentLevelInLex-indentLevel; i > 0; i--){
+						} else if (indentLevelInLex < indentLevel) {
+							for(int i = indentLevel-indentLevelInLex; i > 0; i--){
+								indentLevel--;
 								tokens.add(tokens.size(),new Token(Token.tokenType.DEDENT, ""));
 							}
 							charState = lexState.scanning;
@@ -219,6 +214,14 @@ public class Lexer {
 					if (isNumber(ch) || isLetter(ch)) {
 						accumulator.append(ch);
 						//Previous while loop condition
+					} else if (knownWords.containsKey(""+accumulator.toString()+ch)) {
+						tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()+ch), ""+accumulator.toString()+ch));
+						accumulator.setLength(0);
+						charState = lexState.scanning;
+					} else if (knownWords.containsKey(""+accumulator.toString())) {
+						tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()), accumulator.toString()));
+						accumulator.setLength(0);
+						scanningOutsideOfLex(ch);
 					} else {
 						tokens.add(tokens.size(), new Token(Token.tokenType.IDENTIFIER, accumulator.toString()));
 						accumulator.setLength(0);
@@ -272,7 +275,7 @@ public class Lexer {
 					
 				case identifierMode:
 					if (knownWords.containsKey(""+accumulator.toString()+ch)){
-						tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()+ch), ""+ch+accumulator.toString()));
+						tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()+ch), ""+accumulator.toString()+ch));
 						accumulator.setLength(0);
 						charState = lexState.scanning;
 					} else  if (knownWords.containsKey(""+accumulator.toString())){
@@ -321,21 +324,33 @@ public class Lexer {
 		switch (charState){
 			case number:
 				tokens.add(new Token(Token.tokenType.INTEGER,accumulator.toString()));
+				accumulator.setLength(0);
+				
 				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
+				
 				break;
 			
 			case floatNumber:
 				tokens.add(new Token(Token.tokenType.REAL,accumulator.toString()));
+				accumulator.setLength(0);
+				
 				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
 				break;
 			
 			case word:
 				tokens.add(new Token(Token.tokenType.IDENTIFIER,accumulator.toString()));
+				accumulator.setLength(0);
+				
 				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
 				break;
 			
-			case commentMode:
+				
+			case identifierMode:
+				identifierOutsideOfLex(accumulator.charAt(accumulator.length()-1));
+				accumulator.setLength(0);
+				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
 				break;
+				
 			default:
 				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
 				break;
@@ -379,7 +394,7 @@ public class Lexer {
 	private void identifierOutsideOfLex(char ch){
 		
 		if (knownWords.containsKey(""+accumulator.toString()+ch)){
-			tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()+ch), ""+ch+accumulator.toString()));
+			tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()+ch), ""+accumulator.toString()+ch));
 			accumulator.setLength(0);
 			charState = lexState.scanning;
 		} else  if (knownWords.containsKey(""+accumulator.toString())){
@@ -426,7 +441,7 @@ public class Lexer {
 	
 	private boolean isDoubleQuotes(char input) {return input =='"';}
 	
-	private boolean isSingleQuote(char input) {return input ==96;}
+	private boolean isSingleQuote(char input) {return input == 39;}
 	
 	private boolean isColon(char input) {return input == 58; }
 	

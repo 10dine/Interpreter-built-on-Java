@@ -1,13 +1,15 @@
-{ jf
-}
-
-
-
 define fib (x : integer)
 	variables a, b, c, i :integer
 
 	a:=1
 	b:=1
+hello
+	hello
+		"hello"
+			'c'
+		float
+	real
+boolean
 
 	write a
 	write b
