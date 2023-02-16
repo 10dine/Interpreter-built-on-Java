@@ -3,6 +3,9 @@ define fib (x : integer)
 
 	a:=1
 	b:=1
+
+	variables x :real
+	x:=4.90
 hello
 	hello
 		"hello"

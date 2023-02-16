@@ -21,6 +21,7 @@ public class Lexer {
 	//variables and objects required for the lex function
 	private StringBuilder accumulator = new StringBuilder();                //renamed from tokenString to accumulator
 	private int indentLevel = 0;                                            //for tracking indent
+	private int lineCount = 0;
 	private lexState charState = lexState.scanning;
 	HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>() {{  //for easier token assignment
 		//put("", tokenType.);
@@ -125,6 +126,7 @@ public class Lexer {
 	 */
 	private void linesToToken(){
 		for (String str: lines) {
+			lineCount++;
 			lex(str);
 		}
 	}

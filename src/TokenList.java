@@ -6,10 +6,16 @@ import java.util.ArrayList;
  * toString function for readability.
  */
 public class TokenList extends ArrayList<Token> {
+    
+
 
     @Override
     public void add(int index, Token element) {
         super.add(index, element);
+    }
+    
+    public Token pop(){
+        return this.remove(0);
     }
 
     /**
@@ -20,11 +26,14 @@ public class TokenList extends ArrayList<Token> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        int lineCount = 1;
+        builder.append(String.format("Line Count: %d | ",lineCount));
         for (Token element : this) {
             switch (element.getType()){
                 case ENDOFLINE:
+                    lineCount++;
                     builder.append(element);
-                    builder.append("\n");
+                    builder.append(String.format("\nLine Count: %d | ",lineCount));
                     break;
                 default:
                     builder.append(element);
