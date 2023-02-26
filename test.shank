@@ -45,5 +45,5 @@ define gcdrecur(a, b : integer)
 define main()
 	fib(12)
 
-	
-	
+	"pop"
+	'pop'78.9vov:=:=*mod

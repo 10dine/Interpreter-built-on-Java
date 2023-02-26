@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Lexer {
 	
-	//variables and object intergral to the lexer object
+	//variables and object integral to the lexer object
 	private final Path thePath;
 	private List<String> lines;
 	private final TokenList tokens = new TokenList();
@@ -21,7 +21,7 @@ public class Lexer {
 	//variables and objects required for the lex function
 	private StringBuilder accumulator = new StringBuilder();                //renamed from tokenString to accumulator
 	private int indentLevel = 0;                                            //for tracking indent
-	private int lineCount = 0;
+	private int lineCount = 0;												//will use this later to point to error in line
 	private lexState charState = lexState.scanning;
 	HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>() {{  //for easier token assignment
 		//put("", tokenType.);
@@ -81,9 +81,9 @@ public class Lexer {
 	}};
 	//States for state machine
 	//scanning is used for scanning the type of token being made currently.
-	//word is the state at which the machines is making a WORD type token.
-	//number is the state at which the machines is making a NUMBER type token.
-	//floatNUmber is the state at which the machines is making a NUMBER type token with periods.
+	//word is the state at which the machine is making a WORD type token.
+	//number is the state at which the machine is making a NUMBER type token.
+	//floatNUmber is the state at which the machine is making a NUMBER type token with periods.
 	enum lexState{
 		scanning,
 		identifierMode,
@@ -98,8 +98,6 @@ public class Lexer {
 		characterLiteral
 		
 	}
-	// special boolean variable for looping a char element in the for loop until it is assigned to token type.
-	boolean loopState;
 	
 	//Constructor of lexer object
 	public Lexer(String path) {
@@ -132,10 +130,22 @@ public class Lexer {
 	}
 	
 	/**
-	 * Main state machine
+	 * Main state machine. The way it works is as follows-
 	 *
+	 * Uses For Each on characters on string line.
 	 *
-	 * @param line
+	 * Starts in Tab mode to correctly detect indents and keep track of indent level. Goes to scanning mode when no tab
+	 * character is detected.
+	 *
+	 * Scanning looks through the character sequence until a space or special characters is detected and then changes
+	 * mode to appropriate mode.
+	 *
+	 * Once a sequence of characters is built, the word is checked for keywords which, if it does find any, it switchs
+	 * to identifiermode. If not, it defaults and produces an identifier token.
+	 *
+	 * Identifier mode looks for if the accumalated string is a keyword or special character.
+	 *
+	 * @param line Takes in String that is meant to be a line.
 	 */
 	public void lex(String line) {
 		
@@ -175,40 +185,9 @@ public class Lexer {
 					
 					break;
 				
+					
 				case scanning:
-					if (isNumber(ch)) {
-						accumulator.append(ch);
-						charState = lexState.number;
-						
-					} else if (isLetter(ch)) {
-						accumulator.append(ch);
-						charState = lexState.word;
-						
-					} else if (isDoubleQuotes(ch)){
-						charState = lexState.stringLiteral;
-						
-					} else if (isSingleQuote(ch)){
-						charState = lexState.characterLiteral;
-						
-					} else if (isFloat(ch)) {
-						accumulator.append(ch);
-						charState = lexState.floatNumber;
-						//Previous while loop condition
-					} else if (isBrace(ch)) {
-						charState = lexState.commentMode;
-						
-					} else if (knownWords.containsKey(""+ch)) {
-						
-						accumulator.append(ch);
-						charState = lexState.identifierMode;
-						
-					} else {
-						try {
-							isIllegalChar(ch);
-						} catch (SyntaxErrorException e) {
-							System.out.println(e.getMessage() + " " + ch + ". " + "These are all the Token made so far: " + tokens.toString());System.exit(1);
-						}
-					}
+					scanningOutsideOfLex(ch);
 					break;
 				//(2) starts here
 				case word:
@@ -250,20 +229,20 @@ public class Lexer {
 						scanningOutsideOfLex(ch);
 					}
 					
-					break;//(4) starts here
+					break;
 				case floatNumber:
 					
 					if (isNumber(ch)){
 						accumulator.append(ch);
-						//Previous while loop condition
+						
 					} else if (isLetter(ch)) {
 						tokens.add(tokens.size(), new Token(Token.tokenType.REAL, accumulator.toString()));
-						//System.out.println("Token added succesfully: " + tokens.toString());
+						
 						accumulator.setLength(0);
 						scanningOutsideOfLex(ch);
 					} else if (isFloat(ch)) {
 						tokens.add(tokens.size(), new Token(Token.tokenType.REAL, accumulator.toString()));
-						//System.out.println("Token added succesfully: " + tokens.toString());
+						
 						accumulator.setLength(0);
 						scanningOutsideOfLex(ch);
 					} else {
@@ -295,6 +274,7 @@ public class Lexer {
 					if (isDoubleQuotes(ch)) {
 						tokens.add(tokens.size(), new Token(Token.tokenType.STRINGLITERAL, accumulator.toString()));
 						accumulator.setLength(0);
+						charState = lexState.scanning;
 					} else {
 						accumulator.append(ch);
 					}
@@ -304,6 +284,7 @@ public class Lexer {
 					if (isSingleQuote(ch)) {
 						tokens.add(tokens.size(), new Token(Token.tokenType.CHARACTERLITERAL, accumulator.toString()));
 						accumulator.setLength(0);
+						charState = lexState.scanning;
 					} else {
 						accumulator.append(ch);
 					}
@@ -379,12 +360,14 @@ public class Lexer {
 		} else if (isFloat(ch)) {
 			accumulator.append(ch);
 			charState = lexState.floatNumber;
-			//Previous while loop condition
+			
 		} else if (isBrace(ch)) {
 			charState = lexState.commentMode;
+			
 		} else if (knownWords.containsKey(""+ch)) {
 			accumulator.append(ch);
 			charState = lexState.identifierMode;
+			
 		} else {
 			try {
 				isIllegalChar(ch);
@@ -392,6 +375,7 @@ public class Lexer {
 				System.out.println(e.getMessage() + " " + ch + ". " + "These are all the Token made so far: " + tokens.toString());System.exit(1);
 			}
 		}
+		
 	}
 	private void identifierOutsideOfLex(char ch){
 		
@@ -445,20 +429,12 @@ public class Lexer {
 	
 	private boolean isSingleQuote(char input) {return input == 39;}
 	
-	private boolean isColon(char input) {return input == 58; }
-	
-	private boolean isLess(char input) {return input == 60; }
-	
-	private boolean isGreater(char input) {return input == 62; }
-	
-	private boolean isEquals(char input) {return input == 61; }
-	
 	private boolean isBrace(char input) {return input == '{'; }
 	/**
 	 * Throws IllegalCharacterException if the parameter input is a space(32) character.
 	 * @param input Char value
 	 * @return true or IllegalCharacterException
-	 * @throws SyntaxErrorException
+	 * @throws SyntaxErrorException Syntax Error
 	 */
 	private boolean isIllegalChar(char input) throws SyntaxErrorException {
 		if (input != 32)

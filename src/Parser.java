@@ -9,9 +9,10 @@ public class Parser {
 	}
 	
 	public Node parse(){
-	
+		return Expression();
 	}
 	
+	public expression()
 	
 	private Token matchAndRemove(Token.tokenType tokenType){
 		if (tokenType == peek(0).getType()){
@@ -22,10 +23,8 @@ public class Parser {
 	}
 	
 	private void expectEndsOfLine() throws SyntaxErrorException {
-		if(matchAndRemove(Token.tokenType.ENDOFLINE).getType() == Token.tokenType.ENDOFLINE){
-		
-		} else {
-			throw new SyntaxErrorException("No endOfLine token found!");
+		while (peek(0).getType() == Token.tokenType.ENDOFLINE){
+			matchAndRemove(Token.tokenType.ENDOFLINE);
 		}
 	}
 	
