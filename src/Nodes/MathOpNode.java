@@ -10,8 +10,27 @@ public class MathOpNode extends Node{
 		MOD,
 	}
 	
-	public Node leftSide;
-	public Node rightSide;
+	private operations operator;
+	private Node leftSide;
+	private Node rightSide;
+	
+	public MathOpNode(operations operator, Node leftSide, Node rightSide){
+		this.operator=operator;
+		this.leftSide=leftSide;
+		this.rightSide=rightSide;
+	}
+	
+	private operations getOperator() {
+		return operator;
+	}
+	
+	public Node getLeftSide() {
+		return leftSide;
+	}
+	
+	public Node getRightSide() {
+		return rightSide;
+	}
 	
 	@Override
 	public String ToString() {

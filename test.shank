@@ -47,3 +47,16 @@ define main()
 
 	"pop"
 	'pop'78.9vov:=:=*mod
+
+	1
+        a
+            b
+        c
+
+    {this is a multi-line comment
+                haiii :3 haiii}
+    5 - 3
+    name[5]
+    while 5>= 3
+    for 5<>i
+    1.2.3 "ezpz " "c" "" for while if then else
