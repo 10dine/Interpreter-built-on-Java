@@ -2,7 +2,7 @@ package Nodes;
 
 public class MathOpNode extends Node{
 	
-	enum operations{
+	public enum operations{
 		ADD,
 		SUBTRACT,
 		MULTIPLICATION,
