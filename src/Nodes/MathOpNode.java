@@ -1,5 +1,7 @@
 package Nodes;
 
+import java.util.HashMap;
+
 public class MathOpNode extends Node{
 	
 	public enum operations{
@@ -9,6 +11,13 @@ public class MathOpNode extends Node{
 		DIVISION,
 		MOD,
 	}
+	
+	HashMap<operations, String> operationsString = new HashMap<operations, String>() {{
+		put(operations.ADD, "+");
+		put(operations.SUBTRACT, "-");
+		put(operations.MULTIPLICATION, "*");
+		put(operations.DIVISION, "/");
+	}};
 	
 	private operations operator;
 	private Node leftSide;
@@ -33,7 +42,7 @@ public class MathOpNode extends Node{
 	}
 	
 	@Override
-	public String ToString() {
-		return null;
+	public String toString() {
+		return "M("+leftSide.toString()+operationsString.get(operator)+rightSide.toString()+ ")";
 	}
 }

@@ -1,6 +1,7 @@
 package Nodes;
 
-public class ForNode extends Node{
+public class ProgramNode extends Node{
+	
 	@Override
 	public String toString() {
 		return null;

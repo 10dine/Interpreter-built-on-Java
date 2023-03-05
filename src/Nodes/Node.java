@@ -1,5 +1,5 @@
 
 package Nodes;
 public abstract class Node {
-	public abstract String ToString();
+	public abstract String toString();
 }

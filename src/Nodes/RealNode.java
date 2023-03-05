@@ -13,7 +13,7 @@ public class RealNode extends Node{
 	}
 	
 	@Override
-	public String ToString() {
-		return null;
+	public String toString() {
+		return element.toString();
 	}
 }

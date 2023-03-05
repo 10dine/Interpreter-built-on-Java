@@ -16,7 +16,9 @@ public class Lexer {
 	//variables and object integral to the lexer object
 	private final Path thePath;
 	private List<String> lines;
-	private final TokenList tokens = new TokenList();
+	private TokenList tokens = new TokenList();
+	
+	private Parser parser = new Parser();
 	
 	//variables and objects required for the lex function
 	private StringBuilder accumulator = new StringBuilder();                //renamed from tokenString to accumulator
@@ -100,10 +102,11 @@ public class Lexer {
 	}
 	
 	//Constructor of lexer object
-	public Lexer(String path) {
+	public Lexer(String path) throws ParserErrorException {
 		this.thePath = Paths.get(path + ".shank");
 		stringArr();
 		linesToToken();
+		parser.setTokenList(tokens);
 	}
 	
 	/**
@@ -446,6 +449,10 @@ public class Lexer {
 	
 	private void isIllegalChar() throws SyntaxErrorException {
 		throw new SyntaxErrorException("Illegal characters have been found. The character:");
+	}
+	
+	public Parser getParser() {
+		return parser;
 	}
 	
 	/**
