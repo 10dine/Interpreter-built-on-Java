@@ -29,7 +29,19 @@ public class MathOpNode extends Node{
 		this.rightSide=rightSide;
 	}
 	
-	private operations getOperator() {
+	public void setOperator(operations operator) {
+		this.operator = operator;
+	}
+	
+	public void setLeftSide(Node leftSide) {
+		this.leftSide = leftSide;
+	}
+	
+	public void setRightSide(Node rightSide) {
+		this.rightSide = rightSide;
+	}
+	
+	public operations getOperator() {
 		return operator;
 	}
 	

@@ -13,20 +13,28 @@ public class Token {
         DEDENT,
 		COMMA,// ``
         
+        STRINGTYPE,
         STRINGLITERAL,          //hyrbid
+        CHARACTERTYPE,
         CHARACTERLITERAL,       //hybrid
         INTEGER,                //Was NUMBER; //hybrid
+        INTEGERTYPE,
         REAL,                   //hyrbid
+        REALTYPE,
         BOOLEAN,                //must be taken care of using Hashmap
+        BOOLEANTYPE,
         ARRAY,                  //must be taken care of using Hashmap
+        ARRAYTYPE,
         
         
         VARAIABLES,             //must be taken care of using Hashmap
+        VAR,
         CONSTANT,               //must be taken care of using Hashmap
         
         ASSIGNMENT_COLON_EQUALS,//must be taken care of in lex function
         ASSIGNMENT_EQUALS,      //must be taken care of in lex function
         ASSIGNMENT_COLON,       //must be taken care of in lex function
+        SEMI_COLON,
         
         COMPARATOR_EQUALS,      //must be taken care of using Hashmap
         COMPARATOR_NOT_EQUAL,   //must be taken care of using Hashmap
@@ -63,6 +71,8 @@ public class Token {
         PARAMETERS_END,			//must be taken care of in lex function
         INDEX_START,
         INDEX_END,
+        
+        ABYSS,
         
         ENDOFLINE
 	}

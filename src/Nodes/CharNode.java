@@ -1,8 +1,11 @@
 package Nodes;
 
 public class CharNode extends Node{
+	
 	char element;
-	CharNode(){}
+	
+	public CharNode(char c){
+	}
 	
 	public void setElement(char element) {
 		this.element = element;

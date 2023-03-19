@@ -6,8 +6,6 @@ import java.util.ArrayList;
  * toString function for readability.
  */
 public class TokenList extends ArrayList<Token> {
-    
-
 
     @Override
     public void add(int index, Token element) {
@@ -17,7 +15,7 @@ public class TokenList extends ArrayList<Token> {
     public Token pop(){
         return this.remove(0);
     }
-
+    
     /**
      * toString function overrriden so that all tokens are printed line by line which is marked by the
      * ENDOFLINE token.

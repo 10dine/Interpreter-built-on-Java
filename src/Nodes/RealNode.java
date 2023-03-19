@@ -4,13 +4,17 @@ public class RealNode extends Node{
 	
 	private Float element;
 	
+	public RealNode(){}
+	
 	public RealNode(Float element){
 		this.element = element;
 	}
 	
-	private float getElement(){
+	public float getElement(){
 		return this.element;
 	}
+	
+	public void negate(){ element = -1*element;}
 	
 	@Override
 	public String toString() {

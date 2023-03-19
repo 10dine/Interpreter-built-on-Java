@@ -2,7 +2,8 @@ package Nodes;
 
 public class BoolNode extends Node{
 	Boolean state;
-	BoolNode(){}
+	public BoolNode(){}
+	public BoolNode(Boolean state){this.state = state;}
 	
 	public void setState(Boolean state) {
 		this.state = state;

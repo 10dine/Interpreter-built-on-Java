@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * @author ishty
@@ -7,15 +5,15 @@ import java.util.Scanner;
  * Main Shank file. Asks for the name of the file and then uses a Lexer object to print all the tokens.
  */
 public class Shank {
-    public static void main(String[] args) throws ParserErrorException {
-
-        System.out.println("This program does not accept any symbols currently. It will say if there are any symbols and terminate when they are found.");
-        System.out.println("**Another note: please input filename without extension**");
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the filename: ");
-        String filename = scanner.nextLine();
-
-        Lexer lexer = new Lexer(filename);
-        System.out.println("Here are all the tokens: \n"+ lexer +"\n Here's the root Node in the parsr:" + lexer.getParser().getRoot().toString());
+    public static void main(String[] args) throws Exception {
+        
+        if(args.length == 1){
+            Lexer lexer = new Lexer(args[0]);
+            Parser parser = new Parser(lexer.getTokenList());
+            
+            System.out.println(parser);
+        } else {
+            System.out.println("Please use Shank appropriately **\" Java Shank({filename})\"**");
+        }
     }
 }

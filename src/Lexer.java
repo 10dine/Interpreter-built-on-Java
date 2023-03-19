@@ -18,8 +18,6 @@ public class Lexer {
 	private List<String> lines;
 	private TokenList tokens = new TokenList();
 	
-	private Parser parser = new Parser();
-	
 	//variables and objects required for the lex function
 	private StringBuilder accumulator = new StringBuilder();                //renamed from tokenString to accumulator
 	private int indentLevel = 0;                                            //for tracking indent
@@ -29,14 +27,15 @@ public class Lexer {
 		//put("", tokenType.);
 		
 		put("variables", Token.tokenType.VARAIABLES);
+		put("var", Token.tokenType.VAR);
 		put("constant", Token.tokenType.CONSTANT);
 		
-		put("string", Token.tokenType.STRINGLITERAL);
-		put("character", Token.tokenType.CHARACTERLITERAL);
-		put("integer", Token.tokenType.INTEGER);
-		put("real", Token.tokenType.REAL);
-		put("boolean", Token.tokenType.BOOLEAN);
-		put("array", Token.tokenType.ARRAY);
+		put("string", Token.tokenType.STRINGTYPE);
+		put("character", Token.tokenType.CHARACTERTYPE);
+		put("integer", Token.tokenType.INTEGERTYPE);
+		put("real", Token.tokenType.REALTYPE);
+		put("boolean", Token.tokenType.BOOLEANTYPE);
+		put("array", Token.tokenType.ARRAYTYPE);
 		
 		put("of", Token.tokenType.OF);
 		put("from", Token.tokenType.FROM);
@@ -45,6 +44,7 @@ public class Lexer {
 		put(":=", Token.tokenType.ASSIGNMENT_COLON_EQUALS);
 		put("=", Token.tokenType.ASSIGNMENT_EQUALS);
 		put(":", Token.tokenType.ASSIGNMENT_COLON);
+		put(";", Token.tokenType.SEMI_COLON);
 		
 		//put("=", Token.tokenType.COMPARATOR_EQUALS);
 		put("<>", Token.tokenType.COMPARATOR_NOT_EQUAL);
@@ -103,10 +103,9 @@ public class Lexer {
 	
 	//Constructor of lexer object
 	public Lexer(String path) throws ParserErrorException {
-		this.thePath = Paths.get(path + ".shank");
+		this.thePath = Paths.get(path);
 		stringArr();
 		linesToToken();
-		parser.setTokenList(tokens);
 	}
 	
 	/**
@@ -143,10 +142,11 @@ public class Lexer {
 	 * Scanning looks through the character sequence until a space or special characters is detected and then changes
 	 * mode to appropriate mode.
 	 *
-	 * Once a sequence of characters is built, the word is checked for keywords which, if it does find any, it switchs
+	 * Once a sequence of characters is built, the word is checked for keywords which, if it does find any, it switches
 	 * to identifiermode. If not, it defaults and produces an identifier token.
 	 *
-	 * Identifier mode looks for if the accumalated string is a keyword or special character.
+	 * Identifier mode looks for matches with the keyword hashmap. If the accumulated string is a keyword or special
+	 * character, it produces a corresponding token.
 	 *
 	 * @param line Takes in String that is meant to be a line.
 	 */
@@ -324,8 +324,15 @@ public class Lexer {
 				break;
 			
 			case word:
-				tokens.add(new Token(Token.tokenType.IDENTIFIER,accumulator.toString()));
-				accumulator.setLength(0);
+				if (knownWords.containsKey(""+accumulator.toString())) {
+					tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()), accumulator.toString()));
+					accumulator.setLength(0);
+				} else {
+					tokens.add(tokens.size(), new Token(Token.tokenType.IDENTIFIER, accumulator.toString()));
+					accumulator.setLength(0);
+					charState = lexState.scanning;
+					
+				}
 				
 				tokens.add(new Token(Token.tokenType.ENDOFLINE, ""));
 				break;
@@ -434,7 +441,7 @@ public class Lexer {
 	
 	private boolean isBrace(char input) {return input == '{'; }
 	/**
-	 * Throws IllegalCharacterException if the parameter input is a space(32) character.
+	 * Throws IllegalCharacterException if the parameter input is not a space(32) character.
 	 * @param input Char value
 	 * @return true or IllegalCharacterException
 	 * @throws SyntaxErrorException Syntax Error
@@ -451,8 +458,8 @@ public class Lexer {
 		throw new SyntaxErrorException("Illegal characters have been found. The character:");
 	}
 	
-	public Parser getParser() {
-		return parser;
+	public TokenList getTokenList() {
+		return tokens;
 	}
 	
 	/**
