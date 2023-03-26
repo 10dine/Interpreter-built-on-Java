@@ -73,6 +73,8 @@ public class Parser {
 		ArrayList<VariableNode> variableNodes = new ArrayList<VariableNode>();
 		ArrayList<StatementNode> statementsList;
 		
+		Node arrayIndex = null;
+		
 		//Stage 1 starts here
 		if (matchAndRemove(Token.tokenType.DEFINE) != null) {
 			if (peekType() == Token.tokenType.IDENTIFIER) {
@@ -94,7 +96,8 @@ public class Parser {
 			end,
 			
 			startVariables,
-			typeAndSet
+			typeAndSet,
+			array
 		}
 		state parsingVariables = state.start;
 		boolean constantState = false;
@@ -112,6 +115,8 @@ public class Parser {
 						parsingVariables = state.variables;
 					} else if (peekType() == Token.tokenType.INDENT){
 						parsingVariables = state.end;
+					} else {
+						throw new SyntaxErrorException("Unexpected token!");
 					}
 					break;
 					
@@ -169,10 +174,30 @@ public class Parser {
 									case ARRAYTYPE -> tempType = VariableNode.type.array;
 									default -> throw new SyntaxErrorException("Invalid type in function params! ");
 								}
-								tokenList.pop();
-								for(Token token: variableNameList){
-									variableNodes.add(new VariableNode(token.getValue(), tempType, constantState));
+								if(tempType == VariableNode.type.array){
+									variableMachine = state.array;
+									break;
 								}
+								tokenList.pop();
+								if (matchAndRemove(Token.tokenType.FROM) != null) {
+									Node left = expression();
+									if (matchAndRemove(Token.tokenType.TO) == null) {
+										throw new SyntaxErrorException("No 'to' token");
+									}
+									Node right = expression();
+									
+									for (Token token : variableNameList) {
+										variableNodes.add(new VariableNode(token.getValue(), tempType, constantState, left, right));
+									}
+									variableNameList.clear();
+									
+								} else {
+									for(Token token: variableNameList){
+										variableNodes.add(new VariableNode(token.getValue(), tempType, constantState));
+									}
+									variableNameList.clear();
+								}
+								
 								if (matchAndRemove(Token.tokenType.ENDOFLINE) == null){
 									throw new SyntaxErrorException(
 											String.format("Unexpected Token in parameter declaration. Token: %s", tokenList.pop())
@@ -181,6 +206,48 @@ public class Parser {
 								lineCounter++;
 								variableMachine = state.end;
 								break;
+							
+							case array:
+								tokenList.pop();
+								if(matchAndRemove(Token.tokenType.OF) == null){
+									throw new SyntaxErrorException("No 'of' token");
+								}
+								switch (peekType()){
+									case INTEGERTYPE -> tempType = VariableNode.type.arrayInt;
+									case REALTYPE -> tempType = VariableNode.type.arrayFlt;
+									case STRINGTYPE -> tempType = VariableNode.type.arrayStr;
+									default -> throw new SyntaxErrorException("Invalid Type for array!");
+								}
+								tokenList.pop();
+								if (matchAndRemove(Token.tokenType.FROM) != null) {
+									Node left = expression();
+									if (matchAndRemove(Token.tokenType.TO) == null) {
+										throw new SyntaxErrorException("No 'to' token");
+									}
+									Node right = expression();
+									arrayIndex = new MathOpNode(MathOpNode.operations.SUBTRACT, left, right);
+									
+									for (Token token : variableNameList) {
+										variableNodes.add(new VariableNode(token.getValue(), tempType, constantState, arrayIndex));
+									}
+									variableNameList.clear();
+									
+								} else {
+									for(Token token: variableNameList){
+										variableNodes.add(new VariableNode(token.getValue(), tempType, constantState));
+									}
+									variableNameList.clear();
+								}
+								constantState = true;
+								if (matchAndRemove(Token.tokenType.ENDOFLINE) == null){
+									throw new SyntaxErrorException(
+											String.format("Unexpected Token in parameter declaration. Token: %s", tokenList.pop())
+									);
+								}
+								lineCounter++;
+								variableMachine = state.end;
+								break;
+							
 						}
 					}
 					parsingVariables = state.start;
@@ -209,16 +276,18 @@ public class Parser {
 	 * @return ArrayList of VariableNode s
 	 * @throws SyntaxErrorException throws parameter declaration syntax error
 	 */
-	public ArrayList<VariableNode> parameterDeclarations() throws SyntaxErrorException {
+	public ArrayList<VariableNode> parameterDeclarations() throws SyntaxErrorException, ParserErrorException {
 		
 		ArrayList<VariableNode> variableList = new ArrayList<VariableNode>();
 		TokenList variableNameList = new TokenList();
 		boolean constantState = true;
+		Node arrayIndex = null;
 		
 		enum parameterDeclarationState {
 			start,
 			identifier,
 			typeAndSet,
+			array,
 			end
 		}
 		
@@ -238,7 +307,6 @@ public class Parser {
 							throw new SyntaxErrorException(String.format("Expected \"(\" token. Got: %s", tokenList.get(0)));
 						}
 						break;
-						
 						
 					case identifier:
 						if (matchAndRemove(Token.tokenType.VAR) != null){
@@ -262,10 +330,17 @@ public class Parser {
 							case ARRAYTYPE -> tempType = VariableNode.type.array;
 							default -> throw new SyntaxErrorException("Invalid type in function params! ");
 						}
+						
+						if(tempType == VariableNode.type.array){
+							paramDeclarationState = parameterDeclarationState.array;
+							break;
+						}
+						
 						tokenList.pop();
 						for(Token token: variableNameList){
-							variableList.add(new VariableNode(variableNameList.pop().getValue(), tempType, constantState));
+							variableList.add(new VariableNode(token.getValue(), tempType, constantState));
 						}
+						variableNameList.clear();
 						constantState = true;
 						if (peekType() == Token.tokenType.SEMI_COLON){
 							tokenList.pop();
@@ -277,6 +352,53 @@ public class Parser {
 							throw new SyntaxErrorException(String.format("Unexpected Token in parameter declaration. Token: %s", tokenList.pop()));
 						}
 						break;
+						
+					case array:
+						tokenList.pop();
+						if(matchAndRemove(Token.tokenType.OF) == null){
+							throw new SyntaxErrorException("No 'of' token");
+						}
+						switch (peekType()){
+							case INTEGERTYPE -> tempType = VariableNode.type.arrayInt;
+							case REALTYPE -> tempType = VariableNode.type.arrayFlt;
+							case STRINGTYPE -> tempType = VariableNode.type.arrayStr;
+							default -> throw new SyntaxErrorException("Invalid Type for array!");
+						}
+						
+						tokenList.pop();
+						
+						if (matchAndRemove(Token.tokenType.FROM) != null) {
+							Node left = expression();
+							if (matchAndRemove(Token.tokenType.TO) == null) {
+								throw new SyntaxErrorException("No 'to' token");
+							}
+							Node right = expression();
+							arrayIndex = new MathOpNode(MathOpNode.operations.SUBTRACT, left, right);
+							
+							for (Token token : variableNameList) {
+								variableList.add(new VariableNode(token.getValue(), tempType, constantState, arrayIndex));
+							}
+							variableNameList.clear();
+							
+						} else {
+							for(Token token: variableNameList){
+								variableList.add(new VariableNode(token.getValue(), tempType, constantState));
+							}
+							variableNameList.clear();
+						}
+						
+						constantState = true;
+						if (peekType() == Token.tokenType.SEMI_COLON){
+							tokenList.pop();
+							paramDeclarationState = parameterDeclarationState.identifier;
+						} else if (peekType() == Token.tokenType.PARAMETERS_END){
+							matchAndRemove(Token.tokenType.PARAMETERS_END);
+							paramDeclarationState = parameterDeclarationState.end;
+						} else {
+							throw new SyntaxErrorException(String.format("Unexpected Token in parameter declaration. Token: %s", tokenList.pop()));
+						}
+						
+						
 				}
 			
 		}
@@ -290,7 +412,7 @@ public class Parser {
 	 * @throws ParserErrorException if there is an error parsing the function
 	 * @throws SyntaxErrorException if there is a syntax error in the function definition
 	 */
-	public ArrayList<StatementNode> statements() throws SyntaxErrorException, ParserErrorException {
+	public ArrayList<StatementNode> statements() throws SyntaxErrorException, ParserErrorException, NodeErrorException {
 		ArrayList<StatementNode> statementsList = new ArrayList<StatementNode>();
 		if(matchAndRemove(Token.tokenType.INDENT) == null){
 			throw new SyntaxErrorException("Expected indent!");
@@ -310,8 +432,36 @@ public class Parser {
 	 * @throws ParserErrorException if there is an error parsing the function
 	 * @throws SyntaxErrorException if there is a syntax error in the function definition
 	 */
-	public StatementNode statement() throws ParserErrorException, SyntaxErrorException {
-		return assignment();
+	public StatementNode statement() throws ParserErrorException, SyntaxErrorException, NodeErrorException {
+		
+		switch (peekType()){
+			case IDENTIFIER -> {
+				AssignmentNode assignmentNode;
+				if((assignmentNode = assignment()) != null){
+					return assignmentNode;
+				}
+				FunctionCallNode functionCallNode;
+				if((functionCallNode = parseFunctionCall()) != null){
+					return functionCallNode;
+				}
+			}
+			case IF -> {
+				return parseIf();
+			}
+			case FOR -> {
+				return parseFor();
+			}
+			case REPEAT -> {
+				return parseRepeat();
+			}
+			case WHILE -> {
+				return parseWhile();
+			}
+			default -> {
+				throw new ParserErrorException("Unsupported statement!");
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -326,8 +476,12 @@ public class Parser {
 		
 		Node tempTarget = variableReference();
 		
+		if(tempTarget == null){
+			return null;
+		}
+		
 		if(matchAndRemove(Token.tokenType.ASSIGNMENT_COLON_EQUALS) == null){
-			throw new ParserErrorException("Exception expected :=");
+			return null;
 		}
 		
 		Node value = boolCompare();
@@ -337,6 +491,173 @@ public class Parser {
 		}
 		lineCounter++;
 		return  new AssignmentNode ((VariableReferenceNode) tempTarget, value);
+	}
+	
+	public FunctionCallNode parseFunctionCall() throws ParserErrorException, SyntaxErrorException, NodeErrorException {
+		FunctionCallNode parseFunctionCallNode = new FunctionCallNode();
+		ArrayList<ParameterNode> parseParameterNodelist = new ArrayList<ParameterNode>();
+		String functionCallName;
+		
+		FunctionNode calledFunction;
+		int paramCounter = 0;
+		
+		if(program.containsKey(peek().getValue())){
+			functionCallName = matchAndRemove(Token.tokenType.IDENTIFIER).getValue();
+			calledFunction = program.getFunction(functionCallName);
+		}
+		
+		enum functionCallState{
+			start,
+			parameter,
+			var,
+			end
+		}
+		
+		functionCallState state = functionCallState.start;
+		
+		while (state != functionCallState.end){
+			switch (state){
+				case start -> {
+					if (matchAndRemove(Token.tokenType.ENDOFLINE) != null){
+						lineCounter++;
+						state = functionCallState.end;
+					} else if (matchAndRemove(Token.tokenType.VAR) != null){
+						state = functionCallState.var;
+					} else if (matchAndRemove(Token.tokenType.COMMA) != null){
+						state = functionCallState.start;
+					} else {
+						state = functionCallState.parameter;
+					}
+				}
+				case parameter -> {
+					try {
+						parseParameterNodelist.add(new ParameterNode(boolCompare()));
+					} catch (Exception e) {
+						throw new SyntaxErrorException("Expected parameter for function. | At line: " + lineCounter);
+					}
+					state =functionCallState.start;
+				}
+				case var -> {
+					try {
+						parseParameterNodelist.add(new ParameterNode(variableReference()));
+					} catch (Exception e) {
+						throw new SyntaxErrorException("Expected parameter for function. | At line: " + lineCounter);
+					}
+					state =functionCallState.start;
+				}
+			}
+		}
+		
+		parseFunctionCallNode.setStatementList(parseParameterNodelist);
+		return parseFunctionCallNode;
+		
+	}
+	
+	public ForNode parseFor() throws SyntaxErrorException, ParserErrorException, NodeErrorException {
+		
+		ForNode parseForNode = new ForNode();
+		if(matchAndRemove(Token.tokenType.FOR) == null){
+			return null;
+		}
+		
+		if (peekType() == Token.tokenType.IDENTIFIER){
+			parseForNode.setVariable(new VariableReferenceNode(matchAndRemove(Token.tokenType.IDENTIFIER).getValue()));
+		} else {
+			throw new SyntaxErrorException("No iterator in for loop." + lineCounter);
+		}
+		
+		if (matchAndRemove(Token.tokenType.FROM) == null){
+			throw new SyntaxErrorException("No from token in for loop." + lineCounter);
+		}
+		parseForNode.setFrom(expression());
+		
+		if (matchAndRemove(Token.tokenType.TO) == null){
+			throw new SyntaxErrorException("No to token in for loop." + lineCounter);
+		}
+		parseForNode.setTo(expression());
+		
+		expectEndsOfLine();
+		
+		parseForNode.setStatementList(statements());
+		
+		return parseForNode;
+	}
+	
+	public IfNode parseIf() throws SyntaxErrorException, ParserErrorException, NodeErrorException {
+		
+		IfNode parseIfNode = new IfNode();
+		
+		boolean ifElse = false;
+		
+		if(peekType() != Token.tokenType.IF && peekType() != Token.tokenType.ELSEIF && peekType() != Token.tokenType.ELSE){
+			return null;
+		}
+		
+		if ((matchAndRemove(Token.tokenType.IF) != null || matchAndRemove(Token.tokenType.ELSEIF) != null)){
+		
+		} else if (matchAndRemove(Token.tokenType.ELSE) != null) {
+			ifElse = true;
+		} else {
+			throw new SyntaxErrorException("Expected if, elseif, else, token" + lineCounter);
+		}
+		
+		if(ifElse){
+			
+			expectEndsOfLine();
+			parseIfNode.setNextIf(null);
+			parseIfNode.setStatementList(statements());
+			
+		} else {
+			
+			parseIfNode.setCondition((BooleanCompareNode) boolCompare());
+			if(matchAndRemove(Token.tokenType.THEN) == null){
+				throw new SyntaxErrorException("Expected {then} token" + lineCounter);
+			}
+			expectEndsOfLine();
+			parseIfNode.setStatementList(statements());
+			
+			expectEndsOfLine();
+			parseIfNode.setNextIf(parseIf());
+			
+		}
+		
+		return parseIfNode;
+		
+	}
+	
+	public RepeatNode parseRepeat() throws SyntaxErrorException, ParserErrorException, NodeErrorException {
+		
+		RepeatNode parseRepeatNode = new RepeatNode();
+		
+		if(matchAndRemove(Token.tokenType.REPEAT) == null){
+			return null;
+		}
+		if(matchAndRemove(Token.tokenType.UNTIL) == null){
+			throw new SyntaxErrorException("Expect 'until' token.");
+		}
+		expectEndsOfLine();
+		
+		parseRepeatNode.setCondition((BooleanCompareNode) boolCompare());
+		parseRepeatNode.setStatementList(statements());
+		return parseRepeatNode;
+		
+	}
+	
+	public WhileNode parseWhile() throws ParserErrorException, SyntaxErrorException, NodeErrorException {
+		WhileNode pasreWhileNode = new WhileNode();
+		
+		if(matchAndRemove(Token.tokenType.WHILE) == null){
+			return null;
+		}
+		
+		expectEndsOfLine();
+		try {
+			pasreWhileNode.setCondition((BooleanCompareNode) boolCompare());
+		} catch(Exception e) {
+		
+		}
+		pasreWhileNode.setStatementList(statements());
+		return pasreWhileNode;
 	}
 	
 	/**
@@ -354,7 +675,7 @@ public class Parser {
 		BooleanCompareNode.boolType actualComperatorType;
 		Token.tokenType comperatorType = peekType();
 		switch (comperatorType){
-			case COMPARATOR_EQUALS -> {
+			case ASSIGNMENT_EQUALS -> {
 				actualComperatorType = BooleanCompareNode.boolType.COMPARATOR_EQUAL;
 			}
 			case COMPARATOR_NOT_EQUAL -> {
@@ -391,7 +712,7 @@ public class Parser {
 		VariableReferenceNode temporaryVarRef;
 		Token tempToken;
 		if((tempToken=matchAndRemove(Token.tokenType.IDENTIFIER)) == null){
-			throw new ParserErrorException("Can't parse assignment1 (varRef())");
+			return null;
 		}
 		Node index = null;
 		if(matchAndRemove(Token.tokenType.INDEX_START) != null){
@@ -589,6 +910,12 @@ public class Parser {
 		}
 	}
 	
+	private void expectDedents() throws SyntaxErrorException {
+		while (peek().getType() == Token.tokenType.DEDENT){
+			matchAndRemove(Token.tokenType.DEDENT);
+		}
+	}
+	
 	private Token peek(){
 		return tokenList.get(0);
 	}
@@ -600,9 +927,10 @@ public class Parser {
 	@Override
 	public String toString() {
 		return "Parser{" +
-				"\n\tlineCounter = " + lineCounter +
-				"\n\ttokenList = " + tokenList +
-				"\n\tprogram = " + program +
+				//"\n\tlineCounter = " + lineCounter +
+				//"\n\ttokenList = " + tokenList +
+				//"\n\tprogram = +"
+				 program +
 				"\n}";
 	}
 	

@@ -2,21 +2,19 @@ package Nodes;
 
 import java.util.ArrayList;
 
-public class IfNode extends StatementNode{
+public class RepeatNode extends StatementNode{
 	
 	private BooleanCompareNode condition;
 	private ArrayList<StatementNode> StatementList = new ArrayList<StatementNode>();
-	private IfNode nextIf;
 	
-	public IfNode(){}
+	public RepeatNode(){}
 	
-	public IfNode(BooleanCompareNode condition, ArrayList<StatementNode> statementList, IfNode nextIf) {
+	public RepeatNode(BooleanCompareNode condition, ArrayList<StatementNode> statementList) {
 		this.condition = condition;
 		StatementList = statementList;
-		this.nextIf = nextIf;
 	}
 	
-	public Node getCondition() {
+	public BooleanCompareNode getCondition() {
 		return condition;
 	}
 	
@@ -32,20 +30,11 @@ public class IfNode extends StatementNode{
 		StatementList = statementList;
 	}
 	
-	public Node getNextIf() {
-		return nextIf;
-	}
-	
-	public void setNextIf(IfNode nextIf) {
-		this.nextIf = nextIf;
-	}
-	
 	@Override
 	public String toString() {
-		return "IfNode{" +
+		return "RepeatNode{" +
 				"condition=" + condition +
 				", StatementList=" + StatementList +
-				"\n\t, nextIf ->" + nextIf +
 				'}';
 	}
 }

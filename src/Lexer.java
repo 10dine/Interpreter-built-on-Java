@@ -28,7 +28,7 @@ public class Lexer {
 		
 		put("variables", Token.tokenType.VARAIABLES);
 		put("var", Token.tokenType.VAR);
-		put("constant", Token.tokenType.CONSTANT);
+		put("constants", Token.tokenType.CONSTANT);
 		
 		put("string", Token.tokenType.STRINGTYPE);
 		put("character", Token.tokenType.CHARACTERTYPE);
@@ -55,6 +55,11 @@ public class Lexer {
 		
 		put("define", Token.tokenType.DEFINE);
 		put("write", Token.tokenType.WRITE);
+		
+		put("if", Token.tokenType.IF);
+		put("elsif", Token.tokenType.ELSEIF);
+		put("then", Token.tokenType.THEN);
+		put("else", Token.tokenType.ELSE);
 		
 		put("for", Token.tokenType.FOR);
 		put("while", Token.tokenType.WHILE);
@@ -205,6 +210,7 @@ public class Lexer {
 					} else if (knownWords.containsKey(""+accumulator.toString())) {
 						tokens.add(tokens.size(), new Token(knownWords.get(""+accumulator.toString()), accumulator.toString()));
 						accumulator.setLength(0);
+						charState = lexState.scanning;
 						scanningOutsideOfLex(ch);
 					} else {
 						tokens.add(tokens.size(), new Token(Token.tokenType.IDENTIFIER, accumulator.toString()));

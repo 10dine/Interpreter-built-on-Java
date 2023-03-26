@@ -30,7 +30,7 @@ public class AssignmentNode extends StatementNode{
 	public String toString() {
 		return "AssignmentNode{ " +
 				"targetVariableName = " + targetVariableName +
-				"| value = " + value +
+				" | value = " + value +
 				" }";
 	}
 }

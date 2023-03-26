@@ -12,16 +12,19 @@ public class ProgramNode extends Node{
 	public ProgramNode(){
 	}
 	
+	public boolean containsKey(String name){
+		return functionHashMap.containsKey(name);
+	}
+	
 	public void addFunction(FunctionNode function) throws NodeErrorException {
 		if (functionHashMap.containsKey(function.getName())){
 			throw new NodeErrorException(String.format("No function named \" %s \" found!", function.getName()));
 		} else {
 			functionHashMap.put(function.getName(), function);
-			
 		}
 	}
 	
-	private FunctionNode getFunction(String functionName) throws NodeErrorException {
+	public FunctionNode getFunction(String functionName) throws NodeErrorException {
 		if (functionHashMap.containsKey(functionName)){
 			return functionHashMap.get(functionName);
 		} else {

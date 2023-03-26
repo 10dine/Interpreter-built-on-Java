@@ -46,6 +46,11 @@ public class Token {
         DEFINE,                 //must be taken care of using Hashmap
         WRITE,                  //must be taken care of using Hashmap
         
+        IF,
+        THEN,
+        ELSEIF,
+        ELSE,
+        
         OF,                     //must be taken care of using Hashmap
         FROM,                   //must be taken care of using Hashmap
         TO,                     //must be taken care of using Hashmap

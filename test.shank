@@ -1,5 +1,11 @@
-define start ()
+define start (args : array of string)
+constants pi=3.141
 variables a,b,c : integer
-	a := 5
-	b := 6
-	a[b[c[0]]] := 5
+	if i mod 15=0 then
+		a[1] := 6
+	elsif i mod 3=0 then
+		a[1] := 6
+	elsif i mod 5 = 0 then
+		a[1] := 6
+	else
+		a[1] := 6
