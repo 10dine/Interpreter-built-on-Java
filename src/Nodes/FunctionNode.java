@@ -1,6 +1,7 @@
 package Nodes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * FunctionNode holds two lists of VariableNodes and one list of StatementNodes
@@ -16,6 +17,14 @@ public class FunctionNode extends Node{
 		this.parameterList = parameterList;
 		this.VariableList = variableList;
 		this.StatementList = statementList;
+	}
+	
+	public FunctionNode(String name, ArrayList<VariableNode> parameterList) {
+		Name = name;
+		this.parameterList = parameterList;
+	}
+	
+	public FunctionNode() {
 	}
 	
 	public String getName() {
@@ -48,6 +57,10 @@ public class FunctionNode extends Node{
 	
 	public void setParameterList(ArrayList<VariableNode> parameterList) {
 		this.parameterList = parameterList;
+	}
+	
+	public boolean isVariadic(){
+		return (this.Name.equals("Read") || this.Name.equals("Write"));
 	}
 	
 	@Override

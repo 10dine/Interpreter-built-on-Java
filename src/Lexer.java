@@ -30,6 +30,9 @@ public class Lexer {
 		put("var", Token.tokenType.VAR);
 		put("constants", Token.tokenType.CONSTANT);
 		
+		put("true", Token.tokenType.TRUE);
+		put("false", Token.tokenType.FALSE);
+		
 		put("string", Token.tokenType.STRINGTYPE);
 		put("character", Token.tokenType.CHARACTERTYPE);
 		put("integer", Token.tokenType.INTEGERTYPE);
@@ -393,6 +396,7 @@ public class Lexer {
 		}
 		
 	}
+	
 	private void identifierOutsideOfLex(char ch){
 		
 		if (knownWords.containsKey(""+accumulator.toString()+ch)){
@@ -408,7 +412,6 @@ public class Lexer {
 			scanningOutsideOfLex(ch);
 		}
 	}
-
 	
 	/**
 	 * Sees if input is a char of 0-9

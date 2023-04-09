@@ -9,7 +9,18 @@ public class ProgramNode extends Node{
 	
 	private HashMap<String, FunctionNode> functionHashMap = new HashMap<String, FunctionNode>();
 	
-	public ProgramNode(){
+	public ProgramNode() throws NodeErrorException {
+		this.addFunction(new BuiltInWrite());
+		this.addFunction(new BuiltInRead());
+		this.addFunction(new BuiltInLeft());
+		this.addFunction(new BuiltInRight());
+		this.addFunction(new BuiltInSubstring());
+		this.addFunction(new BuiltInGetRandom());
+		this.addFunction(new BuiltInIntegerToReal());
+		this.addFunction(new BuiltInSquareRoot());
+		this.addFunction(new BuiltInRealToInteger());
+		this.addFunction(new BuiltInStart());
+		this.addFunction(new BuiltInEnd());
 	}
 	
 	public boolean containsKey(String name){

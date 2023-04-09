@@ -11,7 +11,7 @@ public class FunctionCallNode extends StatementNode{
 	
 	public FunctionCallNode(String name, ArrayList<ParameterNode> ParametertList) {
 		Name = name;
-		ParametertList = ParametertList;
+		this.ParametertList = ParametertList;
 	}
 	
 	public String getName() {
@@ -19,7 +19,7 @@ public class FunctionCallNode extends StatementNode{
 	}
 	
 	public void setName(String name) {
-		Name = name;
+		this.Name = name;
 	}
 	
 	public ArrayList<ParameterNode> getParametertList() {
@@ -27,7 +27,7 @@ public class FunctionCallNode extends StatementNode{
 	}
 	
 	public void setStatementList(ArrayList<ParameterNode> ParametertList) {
-		ParametertList = ParametertList;
+		this.ParametertList = ParametertList;
 	}
 	
 	@Override

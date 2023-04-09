@@ -45,6 +45,7 @@ public class Parser {
 	 */
 	private ProgramNode parse() throws ParserErrorException, NodeErrorException, SyntaxErrorException {
 		ProgramNode parseProgram = new ProgramNode();
+		parseProgram.addFunction(new BuiltInWrite());
 		while (tokenList.size() > 0){
 			parseProgram.addFunction(function());
 		}
@@ -539,7 +540,7 @@ public class Parser {
 				}
 				case var -> {
 					try {
-						parseParameterNodelist.add(new ParameterNode(variableReference()));
+						parseParameterNodelist.add(new ParameterNode(variableReference(), true));
 					} catch (Exception e) {
 						throw new SyntaxErrorException("Expected parameter for function. | At line: " + lineCounter);
 					}
@@ -635,9 +636,10 @@ public class Parser {
 		if(matchAndRemove(Token.tokenType.UNTIL) == null){
 			throw new SyntaxErrorException("Expect 'until' token.");
 		}
-		expectEndsOfLine();
 		
 		parseRepeatNode.setCondition((BooleanCompareNode) boolCompare());
+		expectEndsOfLine();
+		
 		parseRepeatNode.setStatementList(statements());
 		return parseRepeatNode;
 		
@@ -650,12 +652,12 @@ public class Parser {
 			return null;
 		}
 		
-		expectEndsOfLine();
 		try {
 			pasreWhileNode.setCondition((BooleanCompareNode) boolCompare());
 		} catch(Exception e) {
 		
 		}
+		expectEndsOfLine();
 		pasreWhileNode.setStatementList(statements());
 		return pasreWhileNode;
 	}
@@ -708,7 +710,7 @@ public class Parser {
 	 * @throws ParserErrorException if there is an error parsing the function
 	 * @throws SyntaxErrorException if there is a syntax error in the function definition
 	 */
-	private Node variableReference() throws ParserErrorException, SyntaxErrorException {
+	private VariableReferenceNode variableReference() throws ParserErrorException, SyntaxErrorException {
 		VariableReferenceNode temporaryVarRef;
 		Token tempToken;
 		if((tempToken=matchAndRemove(Token.tokenType.IDENTIFIER)) == null){
@@ -867,6 +869,20 @@ public class Parser {
 		} else if (peek().getType() == Token.tokenType.REAL) {
 			return new RealNode(Float.parseFloat(matchAndRemove(Token.tokenType.REAL).getValue())*negator);
 			
+		} else if(peek().getType() == Token.tokenType.TRUE) {
+			matchAndRemove(Token.tokenType.TRUE);
+			return new BoolNode(true);
+
+		} else if(peek().getType() == Token.tokenType.TRUE) {
+			matchAndRemove(Token.tokenType.FALSE);
+			return new BoolNode(false);
+		
+		} else if(peek().getType() == Token.tokenType.STRINGLITERAL) {
+			return new StringNode(matchAndRemove(Token.tokenType.STRINGLITERAL).getValue());
+			
+		} else if(peek().getType() == Token.tokenType.CHARACTERLITERAL) {
+			return new CharNode(matchAndRemove(Token.tokenType.CHARACTERLITERAL).getValue().charAt(0));
+			
 		} else if (peek().getType() == Token.tokenType.IDENTIFIER){
 			VariableReferenceNode temporaryVarRef;
 			Token tempToken = tokenList.pop();
@@ -937,7 +953,6 @@ public class Parser {
 	public void setTokenList(TokenList tokenList) throws ParserErrorException, NodeErrorException, SyntaxErrorException {
 		this.tokenList = tokenList;
 	}
-	
 	
 	public Node createNode() {
 		return switch (peek().getType()) {

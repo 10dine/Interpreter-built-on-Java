@@ -1,11 +1,11 @@
-define start (args : array of string)
-constants pi=3.141
+define Write(any number of parameter)
+
+
+
+
+define start ()
 variables a,b,c : integer
-	if i mod 15=0 then
-		a[1] := 6
-	elsif i mod 3=0 then
-		a[1] := 6
-	elsif i mod 5 = 0 then
-		a[1] := 6
-	else
-		a[1] := 6
+	a:= 0
+	b:= 1
+	c:= 2
+	Write a b c

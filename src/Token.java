@@ -31,6 +31,9 @@ public class Token {
         VAR,
         CONSTANT,               //must be taken care of using Hashmap
         
+        TRUE,
+        FALSE,
+        
         ASSIGNMENT_COLON_EQUALS,//must be taken care of in lex function
         ASSIGNMENT_EQUALS,      //must be taken care of in lex function
         ASSIGNMENT_COLON,       //must be taken care of in lex function

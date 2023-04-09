@@ -4,9 +4,11 @@ public class ParameterNode extends Node{
 	
 	private VariableReferenceNode variable;
 	private Node nonVariable;
+	boolean isVar = false;
 	
-	public ParameterNode(VariableReferenceNode variable) {
+	public ParameterNode(VariableReferenceNode variable, boolean isVar) {
 		this.variable = variable;
+		this.isVar = isVar;
 	}
 	
 	public ParameterNode(Node nonVariable) {
