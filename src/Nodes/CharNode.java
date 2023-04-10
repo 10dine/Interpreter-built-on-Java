@@ -5,6 +5,7 @@ public class CharNode extends Node{
 	char element;
 	
 	public CharNode(char c){
+		this.element = c;
 	}
 	
 	public void setElement(char element) {
@@ -15,9 +16,8 @@ public class CharNode extends Node{
 		return element;
 	}
 	
-	
 	@Override
 	public String toString() {
-		return null;
+		return ""+element;
 	}
 }

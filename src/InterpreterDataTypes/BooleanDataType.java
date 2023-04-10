@@ -1,11 +1,19 @@
 package InterpreterDataTypes;
 
 public class BooleanDataType extends InterpreterDataType{
+	
 	private boolean data;
+	
+	public BooleanDataType(boolean data, boolean cState){
+		this.data = data;
+		this.cState = cState;
+	}
 	
 	public BooleanDataType(boolean data){
 		this.data = data;
 	}
+	
+	public BooleanDataType() {}
 	
 	public boolean getData() {
 		return data;
@@ -15,10 +23,8 @@ public class BooleanDataType extends InterpreterDataType{
 		this.data = data;
 	}
 	
-	
-	
 	@Override
-	public String ToString() {
+	public String toString() {
 		return data+"";
 	}
 	

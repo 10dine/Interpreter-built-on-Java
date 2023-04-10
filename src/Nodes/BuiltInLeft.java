@@ -18,6 +18,6 @@ public class BuiltInLeft extends FunctionNode{
 	}
 	public void execute(ArrayList<InterpreterDataType> args){
 		var input = (StringDataType)args.get(1);
-		args.get(2).FromString(input.ToString().substring(0, ((IntegerDataType) args.get(1)).getData()));
+		args.get(2).FromString(input.toString().substring(0, ((IntegerDataType) args.get(1)).getData()));
 	}
 }

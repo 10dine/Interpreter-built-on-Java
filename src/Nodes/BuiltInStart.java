@@ -15,7 +15,7 @@ public class BuiltInStart extends FunctionNode{
 		if (args.size() == 2){
 			if(args.get(0).getClass().equals("InterpreterDataTypes.ArrayDataType")) {
 				ArrayDataType array = (ArrayDataType) args.get(0);
-				args.get(1).FromString(String.valueOf(array.getData()[0]));
+				args.get(1).FromString(String.valueOf(array.getData().get(0)));
 			} else {
 				throw new Exception("");
 			}

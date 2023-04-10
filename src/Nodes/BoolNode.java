@@ -16,6 +16,6 @@ public class BoolNode extends Node{
 	
 	@Override
 	public String toString() {
-		return null;
+		return state.toString();
 	}
 }

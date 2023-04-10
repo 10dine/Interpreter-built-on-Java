@@ -29,7 +29,7 @@ public class ProgramNode extends Node{
 	
 	public void addFunction(FunctionNode function) throws NodeErrorException {
 		if (functionHashMap.containsKey(function.getName())){
-			throw new NodeErrorException(String.format("No function named \" %s \" found!", function.getName()));
+			throw new NodeErrorException(String.format("No function named \"%s\" found!", function.getName()));
 		} else {
 			functionHashMap.put(function.getName(), function);
 		}
@@ -39,7 +39,7 @@ public class ProgramNode extends Node{
 		if (functionHashMap.containsKey(functionName)){
 			return functionHashMap.get(functionName);
 		} else {
-			throw new NodeErrorException(String.format("No function named \" %s \" found!", functionName));
+			throw new NodeErrorException(String.format("No function named \"%s\" found!", functionName));
 		}
 	}
 	

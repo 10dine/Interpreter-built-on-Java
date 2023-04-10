@@ -7,6 +7,8 @@ import java.util.HashMap;
  * FunctionNode holds two lists of VariableNodes and one list of StatementNodes
  */
 public class FunctionNode extends Node{
+	
+	private boolean variadic = false;
 	private String Name;
 	private ArrayList<VariableNode> parameterList = new ArrayList<VariableNode>();
 	private ArrayList<VariableNode> VariableList = new ArrayList<VariableNode>();
@@ -59,8 +61,12 @@ public class FunctionNode extends Node{
 		this.parameterList = parameterList;
 	}
 	
-	public boolean isVariadic(){
-		return (this.Name.equals("Read") || this.Name.equals("Write"));
+	public boolean isVariadic() {
+		return variadic;
+	}
+	
+	public void setVariadic(boolean variadic) {
+		this.variadic = variadic;
 	}
 	
 	@Override

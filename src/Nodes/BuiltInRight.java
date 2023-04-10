@@ -19,7 +19,7 @@ public class BuiltInRight extends FunctionNode{
 	public void execute(ArrayList<InterpreterDataType> args){
 		var input = (StringDataType)args.get(1);
 		int len = ((StringDataType) args.get(0)).getData().length();
-		args.get(2).FromString(input.ToString().substring(((IntegerDataType) args.get(1)).getData(), len-1));
+		args.get(2).FromString(input.toString().substring(((IntegerDataType) args.get(1)).getData(), len-1));
 	}
 	
 }

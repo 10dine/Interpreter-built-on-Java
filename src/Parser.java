@@ -20,7 +20,7 @@ public class Parser {
 	private ProgramNode program;
 	
 	/**
-	 * Constructor for Parser. Starts parse() on Parser.program on initialization;
+	 * Constructor for Parser. Starts parse() on Parser. Program on initialization;
 	 * @param tokens tokenList Object which is essentially an arraylist of tokens
 	 * @throws Exception can be the following exceptions
 	 *	 * @throws ParserErrorException if there is an error parsing the function
@@ -45,7 +45,7 @@ public class Parser {
 	 */
 	private ProgramNode parse() throws ParserErrorException, NodeErrorException, SyntaxErrorException {
 		ProgramNode parseProgram = new ProgramNode();
-		parseProgram.addFunction(new BuiltInWrite());
+		tokenList.removeIf(token -> token.getType() == Token.tokenType.COMMENT);
 		while (tokenList.size() > 0){
 			parseProgram.addFunction(function());
 		}
@@ -71,7 +71,7 @@ public class Parser {
 		
 		String functionName = null;
 		ArrayList<VariableNode> paramNodes = null;
-		ArrayList<VariableNode> variableNodes = new ArrayList<VariableNode>();
+		ArrayList<VariableNode> variableNodes = new ArrayList<>();
 		ArrayList<StatementNode> statementsList;
 		
 		Node arrayIndex = null;
@@ -266,7 +266,7 @@ public class Parser {
 	 *__state machine__
 	 * state set to state.start
 	 * 1. while != state.end
-	 * 2. if state.start check for "(" and switchs to state.identifier
+	 * 2. if state.start check for "(" and switches to state.identifier
 	 * 3. checks for
 	 * 	var -  sets constantState,
 	 * 	identifier - gets name of variables,
@@ -420,6 +420,7 @@ public class Parser {
 		}
 		while(matchAndRemove(Token.tokenType.DEDENT) == null){
 			statementsList.add(statement());
+			expectEndsOfLine();
 			if(tokenList.size()==0){
 				tokenList.add(new Token(Token.tokenType.DEDENT, ""));
 			}
@@ -458,6 +459,7 @@ public class Parser {
 			case WHILE -> {
 				return parseWhile();
 			}
+			case ENDOFLINE -> expectEndsOfLine();
 			default -> {
 				throw new ParserErrorException("Unsupported statement!");
 			}
@@ -487,11 +489,15 @@ public class Parser {
 		
 		Node value = boolCompare();
 		
-		if (matchAndRemove(Token.tokenType.ENDOFLINE) == null){
-			throw new ParserErrorException("Exception expected EOF");
+		if(tokenList.isEmpty()){
+			return new AssignmentNode ((VariableReferenceNode) tempTarget, value);
 		}
+		
+		//if (matchAndRemove(Token.tokenType.ENDOFLINE) == null){
+		//	throw new ParserErrorException("Exception expected EOF");
+		//}
 		lineCounter++;
-		return  new AssignmentNode ((VariableReferenceNode) tempTarget, value);
+		return new AssignmentNode ((VariableReferenceNode) tempTarget, value);
 	}
 	
 	public FunctionCallNode parseFunctionCall() throws ParserErrorException, SyntaxErrorException, NodeErrorException {
@@ -634,7 +640,7 @@ public class Parser {
 			return null;
 		}
 		if(matchAndRemove(Token.tokenType.UNTIL) == null){
-			throw new SyntaxErrorException("Expect 'until' token.");
+			throw new SyntaxErrorException("[Expected 'until' token.]");
 		}
 		
 		parseRepeatNode.setCondition((BooleanCompareNode) boolCompare());
@@ -674,6 +680,9 @@ public class Parser {
 	 */
 	public Node boolCompare() throws ParserErrorException, SyntaxErrorException {
 		Node left = expression();
+		if(tokenList.isEmpty()){
+			return left;
+		}
 		BooleanCompareNode.boolType actualComperatorType;
 		Token.tokenType comperatorType = peekType();
 		switch (comperatorType){
@@ -779,9 +788,7 @@ public class Parser {
 			
 		}
 		lineCounter++;
-		
-		return termOne;
-		
+		return new MathOpNode(operator, termOne, termTwo);
 	}
 	
 	/**
@@ -873,7 +880,7 @@ public class Parser {
 			matchAndRemove(Token.tokenType.TRUE);
 			return new BoolNode(true);
 
-		} else if(peek().getType() == Token.tokenType.TRUE) {
+		} else if(peek().getType() == Token.tokenType.FALSE) {
 			matchAndRemove(Token.tokenType.FALSE);
 			return new BoolNode(false);
 		
@@ -923,6 +930,10 @@ public class Parser {
 		while (peek().getType() == Token.tokenType.ENDOFLINE){
 			matchAndRemove(Token.tokenType.ENDOFLINE);
 			lineCounter++;
+			if(tokenList.size() == 0){
+				break;
+			}
+			
 		}
 	}
 	
@@ -950,17 +961,11 @@ public class Parser {
 				"\n}";
 	}
 	
-	public void setTokenList(TokenList tokenList) throws ParserErrorException, NodeErrorException, SyntaxErrorException {
+	public void setTokenList(TokenList tokenList) {
 		this.tokenList = tokenList;
 	}
 	
-	public Node createNode() {
-		return switch (peek().getType()) {
-			case INTEGER -> new IntegerNode(Integer.valueOf(matchAndRemove(Token.tokenType.INTEGER).getValue()));
-			case REAL -> new RealNode(Float.valueOf(matchAndRemove(Token.tokenType.REAL).getValue()));
-			default -> throw new IllegalStateException("Unexpected value: " + peek().getType());
-		};
+	public ProgramNode getProgram() {
+		return program;
 	}
-	
-//
 }

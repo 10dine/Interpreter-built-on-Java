@@ -11,6 +11,7 @@ public class BuiltInWrite extends FunctionNode{
 	 */
 	public BuiltInWrite(){
 		super("Write", new ArrayList<VariableNode>());
+		this.setVariadic(true);
 	}
 	
 	/**
@@ -19,7 +20,7 @@ public class BuiltInWrite extends FunctionNode{
 	 */
 	public void execute(ArrayList<InterpreterDataType> args){
 		for(InterpreterDataType data : args){
-			System.out.print(data.ToString()+" ");
+			System.out.print(data.toString()+" ");
 		}
 	}
 }

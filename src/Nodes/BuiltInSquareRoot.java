@@ -9,7 +9,7 @@ import java.lang.Math;
 public class BuiltInSquareRoot extends FunctionNode{
 	public BuiltInSquareRoot() {
 		super();
-		this.setName("GetRandom");
+		this.setName("SquareRoot");
 		this.setParameterList(new ArrayList<VariableNode>(){{
 			add(new VariableNode("output", VariableNode.type.integar, true));
 			add(new VariableNode("output", VariableNode.type.integar));

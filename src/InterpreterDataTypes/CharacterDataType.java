@@ -1,11 +1,23 @@
 package InterpreterDataTypes;
 
 public class CharacterDataType extends InterpreterDataType{
+	
 	private Character data;
+	
+	public CharacterDataType(Character data, boolean cState) {
+		this.data = data;
+		this.cState = cState;
+	}
 	
 	public CharacterDataType(Character data) {
 		this.data = data;
 	}
+	
+	public CharacterDataType(boolean cState){
+		this.cState = cState;
+	}
+	
+	public CharacterDataType() {}
 	
 	public Character getData() {
 		return data;
@@ -16,7 +28,7 @@ public class CharacterDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public String ToString() {
+	public String toString() {
 		return data+"";
 	}
 	

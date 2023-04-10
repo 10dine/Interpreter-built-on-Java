@@ -1,11 +1,37 @@
-define Write(any number of parameter)
-
-
-
-
 define start ()
-variables a,b,c : integer
-	a:= 0
-	b:= 1
-	c:= 2
-	Write a b c
+{To test see results of constants remove comment around pi!}
+{constants pi = 3.141}
+variables a: integer from 4 to 6
+variables b: real from 6.0 to 9.0
+variables c: string from 0 to 10
+	a := 5
+	b := 6
+	a:= 5
+
+
+
+	c:="bol"
+
+
+
+	{pi := 5}
+
+	if a mod 15=0 then
+		b := 6
+	elsif a mod 3=0 then
+		b := 6
+	elsif a mod 5 = 0 then
+		b := 6
+	else
+		b := 6
+
+	for i from 1 to 10
+		b := 6
+
+	while a < 5
+		a:=8
+
+	repeat until a = 0
+		a:=a-1
+
+	a:=4

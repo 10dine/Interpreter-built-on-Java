@@ -13,13 +13,13 @@ public class StringNode extends Node{
 	}
 	
 	public StringNode(String value){
-		this.element = element;
+		this.element = value;
 	}
 	
 	public StringNode(){}
 	
 	@Override
 	public String toString() {
-		return null;
+		return element;
 	}
 }

@@ -25,8 +25,8 @@ public class BuiltInEnd extends FunctionNode{
 		if (args.size() == 2){
 			if(args.get(0).getClass().equals("InterpreterDataTypes.ArrayDataType")) {
 				ArrayDataType array = (ArrayDataType) args.get(0);
-				int len = array.getData().length;
-				args.get(1).FromString(String.valueOf(array.getData()[len-1]));
+				int len = array.getData().size();
+				args.get(1).FromString(String.valueOf(array.getData().get(len-1)));
 			} else {
 				throw new Exception("");
 			}

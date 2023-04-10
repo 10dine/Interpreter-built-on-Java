@@ -1,6 +1,16 @@
 package InterpreterDataTypes;
 
 public abstract class InterpreterDataType {
-	public abstract String ToString();
+	boolean cState = false;
+	
+	public boolean iscState() {
+		return cState;
+	}
+	
+	public void setcState(boolean cState) {
+		this.cState = cState;
+	}
+	
+	public abstract String toString();
 	public abstract void FromString(String input);
 }

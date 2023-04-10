@@ -1,11 +1,21 @@
 package InterpreterDataTypes;
 
 public class StringDataType extends InterpreterDataType{
+	
 	private String data;
+	
+	public StringDataType(String data, boolean cState) {
+		this.data = data;
+		this.cState = cState;
+	}
 	
 	public StringDataType(String data) {
 		this.data = data;
 	}
+	
+	public StringDataType(boolean cState){this.cState = cState;}
+	
+	public StringDataType() {}
 	
 	public String getData() {
 		return data;
@@ -16,8 +26,8 @@ public class StringDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public String ToString() {
-		return null;
+	public String toString() {
+		return data;
 	}
 	
 	@Override

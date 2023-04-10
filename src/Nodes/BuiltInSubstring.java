@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class BuiltInSubstring extends FunctionNode{
 	public BuiltInSubstring() {
 		super();
-		this.setName("Left");
+		this.setName("Substring");
 		this.setParameterList(new ArrayList<VariableNode>(){{
 			add(new VariableNode("output", VariableNode.type.string, true));
 			add(new VariableNode("output", VariableNode.type.integar, true));

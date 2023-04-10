@@ -8,8 +8,7 @@ import java.util.Scanner;
 public class BuiltInRead extends FunctionNode{
 	public BuiltInRead(){
 		super("Read", new ArrayList<VariableNode>());
-		//this.setName("Write");
-		//this.setParameterList(new ArrayList<VariableNode>());
+		setVariadic(true);
 	}
 	public void execute(ArrayList<InterpreterDataType> args){
 		Scanner log = new Scanner(System.in);
