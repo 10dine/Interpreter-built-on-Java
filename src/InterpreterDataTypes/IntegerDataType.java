@@ -21,8 +21,17 @@ public class IntegerDataType extends InterpreterDataType{
 		return data;
 	}
 	
-	public void setData(int data) {
-		this.data = data;
+	public void setData(int data) throws Exception {
+		if(cState) {
+			throw new Exception("[This Variable is constant!]");
+		} else {
+			this.data = data;
+		}
+	}
+	
+	@Override
+	public InterpreterDataType clone() {
+		return new IntegerDataType(this.data, this.cState);
 	}
 	
 	@Override
@@ -31,7 +40,15 @@ public class IntegerDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public void FromString(String input) {
-		data = Integer.parseInt(input);
+	public void FromString(String input) throws Exception {
+		try{
+			if(cState) {
+				throw new Exception("[This Variable is constant!]");
+			} else {
+				data = Integer.parseInt(input);
+			}
+		} catch (Exception e) {
+			throw new Exception(String.format("[This IDT(%s) does not accept: (%s) as valid input -> Error: (%s)]", this.getClass().getName(), input, e));
+		}
 	}
 }

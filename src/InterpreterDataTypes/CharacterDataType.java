@@ -23,8 +23,17 @@ public class CharacterDataType extends InterpreterDataType{
 		return data;
 	}
 	
-	public void setData(Character data) {
-		this.data = data;
+	public void setData(Character data) throws Exception {
+		if(cState) {
+			throw new Exception("[This Variable is constant!]");
+		} else {
+			this.data = data;
+		}
+	}
+	
+	@Override
+	public InterpreterDataType clone() {
+		return new CharacterDataType(this.data, this.cState);
 	}
 	
 	@Override
@@ -33,9 +42,18 @@ public class CharacterDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public void FromString(String input) {
+	public void FromString(String input) throws Exception {
 		if (input.length() == 1)
-			data = input.charAt(0);
+			if(cState) {
+				throw new Exception("[This Variable is constant!]");
+			} else {
+				try{
+					this.data = input.charAt(0);
+				} catch (Exception e) {
+					throw new Exception(String.format("[This IDT(%s) does not accept: (%s) as valid input -> Error: (%s)]", this.getClass().getName(), input, e));
+				}
+			}
+			
 		else
 			System.out.println("Invalid Character Input");
 	}

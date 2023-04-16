@@ -11,6 +11,15 @@ public class ParameterNode extends Node{
 		this.isVar = isVar;
 	}
 	
+	public Node getVar(){
+		if (variable != null){
+			return variable;
+		} else if (nonVariable != null){
+			return nonVariable;
+		}
+		return null;
+	}
+	
 	public ParameterNode(Node nonVariable) {
 		this.nonVariable = nonVariable;
 	}
@@ -29,6 +38,14 @@ public class ParameterNode extends Node{
 	
 	public void setNonVariable(Node nonVariable) {
 		this.nonVariable = nonVariable;
+	}
+	
+	public boolean isVar() {
+		return isVar;
+	}
+	
+	public void setVar(boolean var) {
+		isVar = var;
 	}
 	
 	@Override

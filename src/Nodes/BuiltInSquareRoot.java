@@ -11,7 +11,7 @@ public class BuiltInSquareRoot extends FunctionNode{
 		super();
 		this.setName("SquareRoot");
 		this.setParameterList(new ArrayList<VariableNode>(){{
-			add(new VariableNode("output", VariableNode.type.integar, true));
+			add(new VariableNode("input", VariableNode.type.integar, true));
 			add(new VariableNode("output", VariableNode.type.integar));
 		}});
 	}

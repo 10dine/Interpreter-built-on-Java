@@ -13,10 +13,11 @@ public class MathOpNode extends Node{
 	}
 	
 	HashMap<operations, String> operationsString = new HashMap<operations, String>() {{
-		put(operations.ADD, "+");
-		put(operations.SUBTRACT, "-");
-		put(operations.MULTIPLICATION, "*");
-		put(operations.DIVISION, "/");
+		put(operations.ADD, " + ");
+		put(operations.SUBTRACT, " - ");
+		put(operations.MULTIPLICATION, " * ");
+		put(operations.DIVISION, " / ");
+		put(operations.MOD, " MOD ");
 	}};
 	
 	private operations operator;

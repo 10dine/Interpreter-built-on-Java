@@ -1,6 +1,8 @@
 package Nodes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * ProgramNode holds collection of FunctionNodes
@@ -41,6 +43,35 @@ public class ProgramNode extends Node{
 		} else {
 			throw new NodeErrorException(String.format("No function named \"%s\" found!", functionName));
 		}
+	}
+	
+	public Iterator<FunctionNode> iterator(){
+		return new Iterator<FunctionNode>() {
+			
+			ArrayList<FunctionNode> functionList = (ArrayList<FunctionNode>) functionHashMap.values();
+			
+			@Override
+			public boolean hasNext() {
+				if(functionList.size()>0){
+					return true;
+				} else {
+					return false;
+				}
+			}
+			
+			@Override
+			public FunctionNode next() {
+				return functionList.remove(0);
+			}
+		};
+	}
+	
+	public HashMap<String, FunctionNode> getFunctionHashMap() {
+		return functionHashMap;
+	}
+	
+	public void setFunctionHashMap(HashMap<String, FunctionNode> functionHashMap) {
+		this.functionHashMap = functionHashMap;
 	}
 	
 	@Override

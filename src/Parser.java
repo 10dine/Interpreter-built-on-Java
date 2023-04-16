@@ -45,6 +45,7 @@ public class Parser {
 	 */
 	private ProgramNode parse() throws ParserErrorException, NodeErrorException, SyntaxErrorException {
 		ProgramNode parseProgram = new ProgramNode();
+		this.program = parseProgram;
 		tokenList.removeIf(token -> token.getType() == Token.tokenType.COMMENT);
 		while (tokenList.size() > 0){
 			parseProgram.addFunction(function());
@@ -75,7 +76,7 @@ public class Parser {
 		ArrayList<StatementNode> statementsList;
 		
 		Node arrayIndex = null;
-		
+		expectEndsOfLine(); //<- for comments
 		//Stage 1 starts here
 		if (matchAndRemove(Token.tokenType.DEFINE) != null) {
 			if (peekType() == Token.tokenType.IDENTIFIER) {
@@ -104,7 +105,7 @@ public class Parser {
 		boolean constantState = false;
 		
 		while (parsingVariables != state.end){
-			
+			expectEndsOfLine();
 			switch (parsingVariables){
 				
 				case start:
@@ -117,11 +118,12 @@ public class Parser {
 					} else if (peekType() == Token.tokenType.INDENT){
 						parsingVariables = state.end;
 					} else {
-						throw new SyntaxErrorException("Unexpected token!");
+						throw new SyntaxErrorException(String.format("[Error in interpretFunction: Unexpected token (%s)!]", peek()));
 					}
 					break;
 					
 				case constant:
+					matchAndRemove(Token.tokenType.COMMENT);
 					String constantIdentifier;
 					if (peekType() != Token.tokenType.IDENTIFIER){
 						throw new SyntaxErrorException(String.format("Expected identifier token. Got: %s", tokenList.get(0)));
@@ -246,11 +248,13 @@ public class Parser {
 									);
 								}
 								lineCounter++;
+								expectEndsOfLine();
 								variableMachine = state.end;
 								break;
 							
 						}
 					}
+					expectEndsOfLine();
 					parsingVariables = state.start;
 					break;
 			}
@@ -438,10 +442,14 @@ public class Parser {
 		
 		switch (peekType()){
 			case IDENTIFIER -> {
+				TokenList tempTokenList = (TokenList) tokenList.clone();
+				int tempLineCounter = lineCounter;
 				AssignmentNode assignmentNode;
 				if((assignmentNode = assignment()) != null){
 					return assignmentNode;
 				}
+				setTokenList(tempTokenList);
+				lineCounter = tempLineCounter;
 				FunctionCallNode functionCallNode;
 				if((functionCallNode = parseFunctionCall()) != null){
 					return functionCallNode;
@@ -488,6 +496,7 @@ public class Parser {
 		}
 		
 		Node value = boolCompare();
+		expectEndsOfLine();
 		
 		if(tokenList.isEmpty()){
 			return new AssignmentNode ((VariableReferenceNode) tempTarget, value);
@@ -496,22 +505,14 @@ public class Parser {
 		//if (matchAndRemove(Token.tokenType.ENDOFLINE) == null){
 		//	throw new ParserErrorException("Exception expected EOF");
 		//}
-		lineCounter++;
+		
 		return new AssignmentNode ((VariableReferenceNode) tempTarget, value);
 	}
 	
 	public FunctionCallNode parseFunctionCall() throws ParserErrorException, SyntaxErrorException, NodeErrorException {
 		FunctionCallNode parseFunctionCallNode = new FunctionCallNode();
 		ArrayList<ParameterNode> parseParameterNodelist = new ArrayList<ParameterNode>();
-		String functionCallName;
-		
-		FunctionNode calledFunction;
-		int paramCounter = 0;
-		
-		if(program.containsKey(peek().getValue())){
-			functionCallName = matchAndRemove(Token.tokenType.IDENTIFIER).getValue();
-			calledFunction = program.getFunction(functionCallName);
-		}
+		parseFunctionCallNode.setName(matchAndRemove(Token.tokenType.IDENTIFIER).getValue());
 		
 		enum functionCallState{
 			start,
@@ -927,6 +928,9 @@ public class Parser {
 	}
 	
 	private void expectEndsOfLine() throws SyntaxErrorException {
+		if(tokenList.size() == 0){
+			return;
+		}
 		while (peek().getType() == Token.tokenType.ENDOFLINE){
 			matchAndRemove(Token.tokenType.ENDOFLINE);
 			lineCounter++;

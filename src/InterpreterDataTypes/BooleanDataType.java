@@ -19,8 +19,17 @@ public class BooleanDataType extends InterpreterDataType{
 		return data;
 	}
 	
-	public void setData(boolean data) {
-		this.data = data;
+	public void setData(boolean data) throws Exception {
+		if(cState) {
+			throw new Exception("[This Variable is constant!]");
+		} else {
+			this.data = data;
+		}
+	}
+	
+	@Override
+	public InterpreterDataType clone() {
+		return new BooleanDataType(this.data, this.cState);
 	}
 	
 	@Override
@@ -29,5 +38,15 @@ public class BooleanDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public void FromString(String input) {data = Boolean.parseBoolean(input);}
+	public void FromString(String input) throws Exception {
+		try{
+			if(cState) {
+				throw new Exception("[This Variable is constant!]");
+			} else {
+				this.data = Boolean.parseBoolean(input);
+			}
+		} catch (Exception e) {
+			throw new Exception(String.format("[This IDT(%s) does not accept: (%s) as valid input -> Error: (%s)]", this.getClass().getName(), input, e));
+		}
+	}
 }

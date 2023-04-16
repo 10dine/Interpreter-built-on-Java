@@ -57,7 +57,6 @@ public class Lexer {
 		put(">=", Token.tokenType.COMPARATOR_GREATER_OR_EQUALS);
 		
 		put("define", Token.tokenType.DEFINE);
-		put("write", Token.tokenType.WRITE);
 		
 		put("if", Token.tokenType.IF);
 		put("elsif", Token.tokenType.ELSEIF);

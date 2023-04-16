@@ -11,6 +11,7 @@ public class Shank {
             Lexer lexer = new Lexer(args[0]);
             Parser parser = new Parser(lexer.getTokenList());
             System.out.println(parser);
+            new SemanticAnalysis(parser.getProgram());
             Interpreter interpreter = new Interpreter(parser.getProgram());
         } else {
             System.out.println("Please use Shank appropriately **\" Java Shank({filename})\"**");

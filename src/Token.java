@@ -47,7 +47,6 @@ public class Token {
         COMPARATOR_GREATER_OR_EQUALS,//must be taken care of using Hashmap
         
         DEFINE,                 //must be taken care of using Hashmap
-        WRITE,                  //must be taken care of using Hashmap
         
         IF,
         THEN,

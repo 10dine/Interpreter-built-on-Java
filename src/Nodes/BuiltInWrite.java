@@ -22,5 +22,6 @@ public class BuiltInWrite extends FunctionNode{
 		for(InterpreterDataType data : args){
 			System.out.print(data.toString()+" ");
 		}
+		System.out.println("");
 	}
 }

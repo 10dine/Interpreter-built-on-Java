@@ -1,19 +1,77 @@
+{My for loops work a bit differently the "i" does not have to be declared as a variable. It is created as an idt and then
+thrown out once the work is done. Also the fib function here might be wrong.
+			GO TO start() FOR TEST
+}
+define fib (x : integer)
+variables a, b, c :integer
+
+	a:=1
+	b:=1
+
+	Write a
+	Write b
+
+	for i from 2 to x
+
+		c:= a + b
+		a:=b
+		b:=c
+
+		Write c
+
+
+define add (x,y:integer; var sum: integer)
+variables counter : integer
+	counter := y
+	sum := x
+	while counter > 0
+		counter := counter - 1
+		sum := sum + 1}
+
+
+{define addRecursive (x,y : integer; var sum : integer)
+variables yMinusOne, xPlusOne, newSum : integer
+	{ in here, x and y are constant }
+	if y = 0 then
+		sum := x
+	else
+		xPlusOne := x + 1
+		yMinusOne := y - 1
+		addRecursive xPlusOne, yMinusOne, var newSum
+		sum := newSum
+}
 define start ()
-{To test see results of constants remove comment around pi!}
-{constants pi = 3.141}
-variables a: integer from 4 to 6
-variables b: real from 6.0 to 9.0
+constants pi = 3.141
+variables a: integer
+constants p = 3.141
+variables b: integer
+variables x: integer
 variables c: string from 0 to 10
-	a := 5
+	{try changing a to string literal - throws an error}
+	a := 4
 	b := 6
-	a:= 5
+	Write "a is: " a
+	Write "b is: " b
+	Write "x is: " x
+	Write "using the add function"
+	{Try removing the var to see if var functionality works. This checking is done in interpreter.}
+	{YOU CAN TEST FUNCTION TYPE MISMATCH HERE BY CHANGING a TO c}
+	add a b var x
+	Write a "+" b "=" x
+	Write "a, b, x:" a b x
+	Write "a and b remained unchanged and x changed! Also shows builtin function and user-defined functions are working."
+
+	{Uncomment the line below to test MathOpNode checking. This part is done through interpreter for me.}
+	{c:= "hello"
+	a := a mod c
+	}
+	{Uncomment the line below to test function lookup}
+	{minus a b var c}
+	{Uncomment the line below to test function parameter length}
+	{add a b v b var c}
 
 
-
-	c:="bol"
-
-
-
+	{
 	{pi := 5}
 
 	if a mod 15=0 then
@@ -31,7 +89,7 @@ variables c: string from 0 to 10
 	while a < 5
 		a:=8
 
-	repeat until a = 0
-		a:=a-1
-
-	a:=4
+	repeat until a = 100
+		a:=a+1
+	a := a mod a
+	}

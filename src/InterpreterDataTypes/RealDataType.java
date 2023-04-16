@@ -21,8 +21,17 @@ public class RealDataType extends InterpreterDataType{
 		return data;
 	}
 	
-	public void setData(float data) {
-		this.data = data;
+	public void setData(float data) throws Exception {
+		if(cState) {
+			throw new Exception("[This Variable is constant!]");
+		} else {
+			this.data = data;
+		}
+	}
+	
+	@Override
+	public InterpreterDataType clone() {
+		return new RealDataType(this.data, this.cState);
 	}
 	
 	@Override
@@ -31,7 +40,16 @@ public class RealDataType extends InterpreterDataType{
 	}
 	
 	@Override
-	public void FromString(String input) {
-		this.data = Float.parseFloat(input);
+	public void FromString(String input) throws Exception {
+		try{
+			if(cState) {
+				throw new Exception("[This Variable is constant!]");
+			} else {
+				this.data = Float.parseFloat(input);
+			}
+		} catch (Exception e) {
+			throw new Exception(String.format("[This IDT(%s) does not accept: (%s) as valid input -> Error: (%s)]", this.getClass().getName(), input, e));
+		}
+		
 	}
 }

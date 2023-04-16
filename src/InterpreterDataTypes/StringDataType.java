@@ -26,10 +26,21 @@ public class StringDataType extends InterpreterDataType{
 	}
 	
 	@Override
+	public InterpreterDataType clone() {
+		return new StringDataType(this.data, this.cState);
+	}
+	
+	@Override
 	public String toString() {
 		return data;
 	}
 	
 	@Override
-	public void FromString(String input) {this.data = input;}
+	public void FromString(String input) throws Exception {
+		try{
+			this.data = input;
+		} catch (Exception e) {
+			throw new Exception(String.format("[This IDT(%s) does not accept: (%s) as valid input -> Error: (%s)]", this.getClass().getName(), input, e));
+		}
+	}
 }

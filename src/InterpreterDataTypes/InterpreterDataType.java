@@ -11,6 +11,9 @@ public abstract class InterpreterDataType {
 		this.cState = cState;
 	}
 	
+	public abstract InterpreterDataType clone();
+	
 	public abstract String toString();
-	public abstract void FromString(String input);
+	
+	public abstract void FromString(String input) throws Exception;
 }

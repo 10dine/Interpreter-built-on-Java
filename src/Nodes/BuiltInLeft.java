@@ -11,12 +11,12 @@ public class BuiltInLeft extends FunctionNode{
 		super();
 		this.setName("Left");
 		this.setParameterList(new ArrayList<VariableNode>(){{
-			add(new VariableNode("output", VariableNode.type.string, true));
-			add(new VariableNode("output", VariableNode.type.integar, true));
+			add(new VariableNode("input", VariableNode.type.string, true));
+			add(new VariableNode("index", VariableNode.type.integar, true));
 			add(new VariableNode("output", VariableNode.type.string));
 		}});
 	}
-	public void execute(ArrayList<InterpreterDataType> args){
+	public void execute(ArrayList<InterpreterDataType> args) throws Exception {
 		var input = (StringDataType)args.get(1);
 		args.get(2).FromString(input.toString().substring(0, ((IntegerDataType) args.get(1)).getData()));
 	}

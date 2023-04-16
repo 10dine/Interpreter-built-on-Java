@@ -10,14 +10,20 @@ public class BuiltInRead extends FunctionNode{
 		super("Read", new ArrayList<VariableNode>());
 		setVariadic(true);
 	}
-	public void execute(ArrayList<InterpreterDataType> args){
-		Scanner log = new Scanner(System.in);
+	public void execute(ArrayList<InterpreterDataType> args, Scanner log) throws Exception {
 		String[] input = log.nextLine().split(" ");
+		
+		if (input.length  != args.size()){
+			throw new Exception("[Error in BuiltInRead: Not Enough Inputs]");
+		}
 		int inputIndex = 0;
 		
-		for (InterpreterDataType data: args){
-			data.FromString(input[inputIndex++]);
+		try {
+			for (InterpreterDataType data : args) {
+				data.FromString(input[inputIndex++]);
+			}
+		} catch (Exception e){
+			throw new Exception(String.format("[Error in BuiltInRead: Parsing Failed -> (%s) ]", e));
 		}
-		log.close();
 	}
 }

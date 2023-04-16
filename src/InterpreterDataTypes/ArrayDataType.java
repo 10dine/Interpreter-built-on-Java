@@ -23,12 +23,17 @@ public class ArrayDataType extends InterpreterDataType{
 	}
 	
 	@Override
+	public InterpreterDataType clone() {
+		return null;
+	}
+	
+	@Override
 	public String toString() {
 		return data.toString();
 	}
 	
 	@Override
 	public void FromString(String input) {
-	
+
 	}
 }

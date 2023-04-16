@@ -11,9 +11,9 @@ public class BuiltInSubstring extends FunctionNode{
 		super();
 		this.setName("Substring");
 		this.setParameterList(new ArrayList<VariableNode>(){{
-			add(new VariableNode("output", VariableNode.type.string, true));
-			add(new VariableNode("output", VariableNode.type.integar, true));
-			add(new VariableNode("output", VariableNode.type.integar, true));
+			add(new VariableNode("input", VariableNode.type.string, true));
+			add(new VariableNode("startIndex", VariableNode.type.integar, true));
+			add(new VariableNode("endIndex", VariableNode.type.integar, true));
 			add(new VariableNode("output", VariableNode.type.string));
 		}});
 	}
